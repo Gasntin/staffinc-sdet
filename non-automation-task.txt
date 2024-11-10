@@ -1,0 +1,99 @@
+1.Test Case: Verifying contact sales required fields
+
+Feature: Verify the submit "Kontak Sales" required fields
+
+  Scenario Outline: User submits the form with missing required fields
+    Given the user is on the "Contact" page at "https://staffinc.co/#contact"
+    When the user enters "<fullName>" in the full name field
+    And the user enters "<email>" in the business email field
+    And the user enters "<phoneNumber>" in the mobile phone number field
+    And the user enters "<position>" in the position field
+    And the user enters "<company>" in the company field
+    And the user enters "<companySize>" in the company size field
+    And the user enters "<inquiry>" in the please tell us what you need field
+    When I click on the "Submit" button
+    Then I should see an error message saying "Please complete all required fields."
+
+     Examples:
+      | fullName        | email                   | phoneNumber        | position | company   | companySize | iquiry      |
+      |                 | septianega18@gmail.com  | 08998780087        | Director | staffinc  | 1000+       | IT staffing | # Empty full name
+      | Ega Septian     |                         | 08998780087        | Director | staffinc  | 1000+       | IT staffing | # Empty email  
+      | Ega Septian     | septianega18@gmail.com  |                    | Director | staffinc  | 1000+       | IT staffing | # Empty phone number  
+      | Ega Septian     | septianega18@gmail.com  | 08998780087        |          | staffinc  | 1000+       | IT staffing | # Empty position
+      | Ega Septian     | septianega18@gmail.com  | 08998780087        | Director |           | 1000+       | IT staffing | # Empty company name  
+      | Ega Septian     | septianega18@gmail.com  | 08998780087        | Director | staffinc  |             | IT staffing | # Empty company size  
+      | Ega Septian     | septianega18@gmail.com  | 08998780087        | Director | staffinc  | 1000+       |             | # Empty tell us whay you need  
+
+
+
+
+
+2. Test Case: Simulate race condition by submit requests
+
+Feature: Simulate race condition
+
+  Scenario: Two users submit the form at the same time at "https://staffinc.co/#contact"
+    Given the user is on the form page
+    When the user fills in the form and clicks the submit button
+    And another user fills in the same form and clicks the submit button
+    Then both submissions should succeed
+    And there should be no data corruption or unexpected behavior
+
+
+
+
+
+3. Test Case: Verifying 404 Error Page with Specific Text for Non-Existent URL
+
+Feature: Verifying 404 error page with specific text when accessing a non-existent URL
+
+  Scenario: Accessing a non-existent URL "https://staffinc.co/config.php"
+    Given the user visit the URL "https://staffinc.co/config.php"
+    When the page loads
+    And the user should see a 404 image page
+    And the page should display the text "Tidak ada hasil yang ditemukan :("
+    And the page should display the text "Silahkan ketik kata kunci yang sesuai dan coba lagi"
+    And the page should display a "Back to Home" button
+    When the user click on the "Back to Home" button
+    Then the user should be redirected to the homepage at "https://staffinc.co/"
+
+
+
+
+
+4. Test Case: Verifying Page Load Speed
+
+Feature: Verifying page load speed connection for the homepage
+  
+  Scenario Outline: Access the website with throttled network speeds
+    Given the user sets the network speed to "<networkSpeed>" using throttling
+    When the user navigates to "https://staffinc.co/"
+    Then the page should load within "<timeout>" seconds
+
+    Examples:
+      | networkSpeed | timeout |
+      | Fast 4G      | 10      |
+      | Slow 4G      | 10      |
+      | 3G           | 15      |
+
+
+
+
+
+
+5. Test case: Invalid fill on login page
+
+Feature: Login Functionality
+
+  Scenario Outline: Attempt to fill in with invalid email and password combinations
+  Given the user visit the login page URL "https://client.staffincsuite.co/login"
+  When the user enters "<email>" in the email field
+  And the user enters "<password>" in the password field
+  Then the error message "<expectedMessage>" should be displayed
+
+    Examples:
+      | email              | password      | expectedMessage                |
+      |                    |               | "Tidak Boleh Kosong"           |  # Both fields empty
+      | invalid-email      | password123   | "email must be a valid email"  |  # Invalid email format
+      | user@example.com   |               | "Tidak Boleh Kosong"           |  # Blank password
+      |                    | password123   | "Tidak Boleh Kosong"           |  # Blank email
